@@ -14,7 +14,7 @@ This projetc is to put together all what we have learnt so far in C programming 
 - Group work
 - and Learning how to learn
 
-### Tasks1
+### Task 1
 Write a UNIX command line interpreter.
 
 Your Shell should:
