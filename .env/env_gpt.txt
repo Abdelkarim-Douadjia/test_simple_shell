@@ -1,0 +1,189 @@
+printenv with environ
+Here's a program that prints the environment using the global variable environ:
+
+c
+Copy code
+#include <stdio.h>
+#include <stdlib.h>
+
+extern char **environ;
+
+int main() {
+    char **env = environ;
+    while (*env) {
+        printf("%s\n", *env);
+        env++;
+    }
+    return 0;
+}
+This program uses the environ global variable, which is an array of strings containing the environment variables. It loops through each string in the array and prints it to the console.
+
+env vs environ
+Here's a program that prints the address of env (the third parameter of the main function) and environ (the global variable):
+
+c
+Copy code
+#include <stdio.h>
+#include <stdlib.h>
+
+extern char **environ;
+
+int main(int argc, char **argv, char **env) {
+    printf("Address of env: %p\n", env);
+    printf("Address of environ: %p\n", environ);
+    return 0;
+}
+The env parameter of the main function is a pointer to an array of strings containing the environment variables. The environ global variable is also an array of strings containing the environment variables. In most implementations, env and environ will have the same value, since env is typically initialized to the value of environ. However, this behavior is not guaranteed by the C standard.
+
+getenv()
+Here's a function that gets an environment variable:
+
+c
+Copy code
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *_getenv(const char *name) {
+    char **env = environ;
+    size_t namelen = strlen(name);
+    while (*env) {
+        if (strncmp(*env, name, namelen) == 0 && (*env)[namelen] == '=') {
+            return *env + namelen + 1;
+        }
+        env++;
+    }
+    return NULL;
+}
+This function loops through each string in the environ array and checks if the string starts with the specified environment variable name, followed by an equals sign. If a match is found, it returns a pointer to the value of the environment variable (the part of the string after the equals sign). If no match is found, it returns NULL.
+
+PATH
+Here's a function that prints each directory contained in the environment variable PATH:
+
+c
+Copy code
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void print_path() {
+    char *path = getenv("PATH");
+    if (path) {
+        char *token = strtok(path, ":");
+        while (token) {
+            printf("%s\n", token);
+            token = strtok(NULL, ":");
+        }
+    }
+}
+This function uses getenv to get the value of the environment variable PATH, which contains a colon-separated list of directories. It then uses strtok to split the string into individual directory names and prints each one to the console.
+PATH
+Here's a function that builds a linked list of the PATH directories:
+
+c
+Copy code
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct path_node {
+    char *dir;
+    struct path_node *next;
+} PathNode;
+
+PathNode *build_path_list() {
+    PathNode *head = NULL;
+    PathNode *tail = NULL;
+
+    char *path = getenv("PATH");
+    if (path) {
+        char *token = strtok(path, ":");
+        while (token) {
+            PathNode *node = (PathNode *) malloc(sizeof(PathNode));
+            node->dir = strdup(token);
+            node->
+ node->next = NULL;
+            if (!head) {
+                head = node;
+            } else {
+                tail->next = node;
+            }
+            tail = node;
+            token = strtok(NULL, ":");
+        }
+    }
+
+    return head;
+}
+This function works similarly to the previous print_path function, but instead of printing the directories, it creates a linked list of PathNode structs, where each struct contains a directory name and a pointer to the next node in the list.
+setenv
+Here's a function that changes or adds an environment variable:
+
+c
+Copy code
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int _setenv(const char *name, const char *value, int overwrite) {
+    if (!name || !value) {
+        return -1;
+    }
+
+    char **env = environ;
+    size_t namelen = strlen(name);
+    size_t vallen = strlen(value);
+    while (*env) {
+        if (strncmp(*env, name, namelen) == 0 && (*env)[namelen] == '=') {
+            if (!overwrite) {
+                return 0;
+            }
+            char *newenv = (char *) malloc(namelen + vallen + 2);
+            sprintf(newenv, "%s=%s", name, value);
+            *env = newenv;
+            return 0;
+        }
+        env++;
+    }
+
+    char *newenv = (char *) malloc(namelen + vallen + 2);
+    sprintf(newenv, "%s=%s", name, value);
+    *(env + 1) = NULL;
+    *env = newenv;
+    return 0;
+}
+This function loops through the environ array and checks if the specified environment variable already exists. If it does, and overwrite is false, the function returns without making any changes. If overwrite is true, the function allocates a new string containing the new value of the environment variable and replaces the old string in the environ array.
+
+If the specified environment variable does not already exist, the function allocates a new string containing the name and value of the environment variable and adds it to the end of the environ array. Note that this assumes that the environ array has at least one unused slot at the end to add the new environment variable.
+
+unsetenv
+Here's a function that deletes an environment variable:
+
+c
+Copy code
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int _unsetenv(const char *name) {
+    if (!name) {
+        return -1;
+    }
+
+    char **env = environ;
+    size_t namelen = strlen(name);
+    while (*env) {
+        if (strncmp(*env, name, namelen) == 0 && (*env)[namelen] == '=') {
+            char **env2 = env;
+            while (*env2) {
+                *env2 = *(env2 + 1);
+                env2++;
+            }
+            return 0;
+        }
+        env++;
+    }
+
+    return 0;
+}
+This function loops through the environ array and checks if the specified environment variable exists. If it does, it shifts all the subsequent strings in the array down by one and returns. Note that this assumes that the environ array has at least one unused slot at the end to shift the strings into.
