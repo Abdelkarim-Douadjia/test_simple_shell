@@ -9,12 +9,12 @@
 int main(void)
 {
 /*# pid_t get_pid; */
-    pid_t get_ppid;
+	pid_t get_ppid;
 
 /*# get_pid = getpid(); */
-    get_ppid = getppid();
+	get_ppid = getppid();
 
 /*# printf("%u\n", get_pid); */
-    printf("%u\n", get_ppid);
-    return (0);
+	printf("%u\n", get_ppid);
+	return (0);
 }
