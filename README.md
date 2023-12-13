@@ -7,7 +7,7 @@ The Linux command line is a text interface to your computer. Often referred to a
 - Victor Osibajo
 - Abdelkarim Douadjia
 
-This projetc is to put together all what we have learnt so far in C programming language which includes: 
+This projetc is to put together all what we have learnt so far in C programming language which includes:
 - Basics of programming
 - Basics of C
 - Basics of thinking like an engineer

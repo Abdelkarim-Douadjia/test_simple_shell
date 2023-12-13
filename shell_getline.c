@@ -1,11 +1,11 @@
 #include "shell.h"
 
 /**
- * read-line - read a char (line) from the standard input and output
+ * read_line - read a char (line) from the standard input and output
  *
  * Return: the command from the user's input
  */
-char *read-line(void)
+char *read_line(void)
 {
 	char *line = NULL;
 	size_t buffer_size = 0;

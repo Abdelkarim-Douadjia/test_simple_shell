@@ -1,7 +1,8 @@
 #include "shell.h"
 
 /**
- * execute_command - This will  execute a command which includes  arguments using fork & execve
+ * execute_command -This command will execute a command which includes
+ * arguments using fork & execve
  * @args: these are all teh argurmantes that will be passed
  *
  * Return: 1 when it is  infinite and, 0 for success
